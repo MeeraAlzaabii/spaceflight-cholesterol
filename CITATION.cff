@@ -1,0 +1,14 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite it as below."
+title: "spaceflight-cholesterol"
+abstract: "A reproducible reanalysis of NASA GLDS-241 mouse skin RNA-seq: spaceflight vs ground control"
+type: software
+authors:
+  - given-names: "Meera"
+    family-names: "Alzaabi"
+    email: "meera.asa.alzaabi@gmail.com"
+    orcid: "https://orcid.org/0009-0003-8850-5731"
+repository-code: "https://github.com/MeeraAlzaabii/spaceflight-cholesterol"
+license: MIT
+version: 0.1.0
+date-released: "2026-11-09"
