@@ -2,23 +2,41 @@
 # Pixi records the exact versions it installed in pixi.lock (commit both).
 [workspace]
 name = "spaceflight-cholesterol"
-description = "A reproducible reanalysis of NASA GLDS-241 mouse skin RNA-seq: spaceflight vs ground control"
-authors = ["Meera Alzaabi <meera.asa.alzaabi@gmail.com>"]
+description = "Reproducible re-analysis of NASA GLDS-241 (RR-5 mouse femoral skin RNA-seq): spaceflight vs ground control"
+authors = ["Meera Alzaabi", "Razan Amer", "Shamsa Aladawi", "Hessa Almesafri", "Meznah Alhmoudi", "Radyah Fiza"]
 channels = ["conda-forge", "bioconda"]
-platforms = ["linux-64", "osx-arm64", "osx-64", "win-64"]
-version = "0.1.0"
+# No win-64: Bioconductor packages come from bioconda, which has no Windows
+# builds. Windows users run the project in WSL (Ubuntu), which is linux-64.
+platforms = ["linux-64", "osx-arm64", "osx-64"]
+version = "1.0.0"
 
 [dependencies]
+# Workflow, report, data download
 python = "3.13.*"
+pyyaml = ">=6"
+snakemake-minimal = ">=8"
 quarto = ">=1.9"
-jupyterlab = ">=4"
-ipykernel = ">=7"
-pandas = ">=2"
-matplotlib = ">=3.9"
-papermill = ">=2.6"   # Quarto needs it for report parameters (-P)
+cffconvert = ">=2"
+# R and the packages the analysis uses (were BiocManager::install() calls)
+r-base = "4.4.*"
+r-yaml = "*"
+r-knitr = "*"
+r-rmarkdown = "*"
+r-ggplot2 = "*"
+r-factoextra = "*"
+r-pheatmap = "*"
+bioconductor-edger = "*"
+bioconductor-deseq2 = "*"
+bioconductor-gage = "*"
+bioconductor-pathview = "*"
+bioconductor-annotationdbi = "*"
+"bioconductor-org.mm.eg.db" = "*"
+bioconductor-clusterprofiler = "*"
 
 [tasks]
-check = { cmd = "python --version && quarto --version", description = "Check that the tools work" }
-# `reproduce` must rebuild every result from the raw data with one command.
-# The lessons replace this placeholder with real steps.
-reproduce = { cmd = "python -c \"print('Nothing to reproduce yet: add your steps to the reproduce task in pixi.toml')\"", description = "Rebuild all results from raw data" }
+check = { cmd = "python --version && Rscript --version && quarto --version && snakemake --version", description = "Check that the tools work" }
+download = { cmd = "python scripts/download_data.py && Rscript scripts/fetch_kegg_gene_sets.R", description = "Download the GLDS-241 counts table and the KEGG mouse gene sets into data/raw/" }
+run-snakemake = { cmd = "snakemake --cores 1", depends-on = ["download"], description = "Run the analysis with Snakemake (workflow/Snakefile)" }
+report = { cmd = "quarto render reports/report.qmd", depends-on = ["run-snakemake"], description = "Render the Quarto report" }
+reproduce = { depends-on = ["report"], description = "Download raw data, rerun the analysis and render the report" }
+clean = { cmd = "rm -rf data/processed/*.rds data/processed/*.tsv results/figures results/tables results/logs reports/report.html reports/report_files .snakemake", description = "Remove everything reproduce makes (keeps raw data)" }
