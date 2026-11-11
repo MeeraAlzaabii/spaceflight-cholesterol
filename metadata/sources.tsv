@@ -1,0 +1,3 @@
+file	url	bytes	downloaded
+data/raw/OSD-241/GLDS-241_rna_seq_RSEM_Unnormalized_Counts_GLbulkRNAseq.csv	https://osdr.nasa.gov/geode-py/ws/studies/OSD-241/download?source=datamanager&file=GLDS-241_rna_seq_RSEM_Unnormalized_Counts_GLbulkRNAseq.csv	4378806	2026-11-11
+data/raw/OSD-241/GLDS-241_rna_seq_SampleTable_GLbulkRNAseq.csv	https://osdr.nasa.gov/geode-py/ws/studies/OSD-241/download?source=datamanager&file=GLDS-241_rna_seq_SampleTable_GLbulkRNAseq.csv	921	2026-11-11
