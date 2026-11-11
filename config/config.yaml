@@ -4,10 +4,10 @@ data:
   osd_id: "241"                        # NASA OSDR study OSD-241 (GLDS-241)
   raw_dir: "data/raw/OSD-241"          # downloaded files land here (read-only)
   # Files to download from OSD-241 (case-insensitive substrings; .csv only)
-  download_patterns: ["Unnormalized_Counts", "SampleTable"]
+  download_patterns: ["RSEM_Unnormalized_Counts_GLbulkRNAseq", "SampleTable"]
   # Which downloaded file is the counts table (regular expressions, tried in
   # order; the first that matches exactly one file is used).
-  counts_patterns: ["RSEM_Unnormalized_Counts", "Unnormalized_Counts"]
+  counts_patterns: ["RSEM_Unnormalized_Counts_GLbulkRNAseq"]
   ground_label: "_GC_"                 # substring of ground-control sample names
   flight_label: "_FLT_"                # substring of spaceflight sample names
   checksums: "metadata/checksums.sha256"
