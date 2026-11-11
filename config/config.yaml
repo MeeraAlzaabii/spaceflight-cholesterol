@@ -1,0 +1,30 @@
+# All parameters of the analysis. Change them here, not in the code.
+
+data:
+  osd_id: "241"                        # NASA OSDR study OSD-241 (GLDS-241)
+  raw_dir: "data/raw/OSD-241"          # downloaded files land here (read-only)
+  # Files to download from OSD-241 (case-insensitive substrings; .csv only)
+  download_patterns: ["Unnormalized_Counts", "SampleTable"]
+  # Which downloaded file is the counts table (regular expressions, tried in
+  # order; the first that matches exactly one file is used).
+  counts_patterns: ["RSEM_Unnormalized_Counts", "Unnormalized_Counts"]
+  ground_label: "_GC_"                 # substring of ground-control sample names
+  flight_label: "_FLT_"                # substring of spaceflight sample names
+  checksums: "metadata/checksums.sha256"
+  sources: "metadata/sources.tsv"
+
+kegg:
+  species: "mmu"
+  gene_sets: "data/raw/kegg/kegg_mmu_gene_sets.rds"
+  pathview_dir: "data/raw/kegg/pathview"
+
+analysis:
+  seed: 123
+  kmeans_k: 2
+  kmeans_nstart: 25
+  hclust_method: "ward.D2"
+  padj_cutoff: 0.05                    # significant genes: padj < cutoff ...
+  lfc_cutoff: 1                        # ... and |log2 fold change| > cutoff
+  enrich_pvalue: 0.05
+  enrich_qvalue: 0.05
+  top_pathways: 10
