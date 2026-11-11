@@ -1,0 +1,91 @@
+# Re-analysis of NASA GLDS-241 (spaceflight vs ground control)
+# Run with: pixi run reproduce
+configfile: "config/config.yaml"
+
+FIG = "results/figures"
+TAB = "results/tables"
+LOG = "results/logs"
+
+
+rule all:
+    input:
+        f"{FIG}/pca.png",
+        f"{FIG}/hierarchical_dendrogram.png",
+        f"{TAB}/significant_genes.tsv",
+        f"{FIG}/heatmap_significant_genes.png",
+        f"{TAB}/kegg_enrichment.tsv",
+
+
+rule prepare_counts:
+    input:
+        config["data"]["checksums"],          # changes only when the raw data changes
+        script="scripts/01_prepare_counts.R",
+    output:
+        "data/processed/counts.rds",
+        "data/processed/samples.tsv",
+    log:
+        f"{LOG}/01_prepare_counts.log",
+    shell:
+        "Rscript {input.script} > {log} 2>&1"
+
+
+rule pca_clustering:
+    input:
+        "data/processed/counts.rds",
+        script="scripts/02_pca_clustering.R",
+    output:
+        f"{FIG}/pca.png",
+        f"{FIG}/kmeans_elbow.png",
+        f"{FIG}/kmeans_clusters.png",
+        f"{FIG}/hierarchical_dendrogram.png",
+        f"{TAB}/pca_variance.tsv",
+        f"{TAB}/kmeans_clusters.tsv",
+        f"{TAB}/filtering_summary.tsv",
+    params:
+        analysis=config["analysis"],          # rerun when a setting changes
+    log:
+        f"{LOG}/02_pca_clustering.log",
+    shell:
+        "Rscript {input.script} > {log} 2>&1"
+
+
+rule dge:
+    input:
+        "data/processed/counts.rds",
+        script="scripts/03_dge.R",
+    output:
+        f"{TAB}/deseq2_results.tsv",
+        f"{TAB}/significant_genes.tsv",
+        f"{TAB}/deseq2_summary.txt",
+        f"{FIG}/ma_plot.png",
+        f"{FIG}/volcano_plot.png",
+        f"{FIG}/heatmap_significant_genes.png",
+    params:
+        padj=config["analysis"]["padj_cutoff"],
+        lfc=config["analysis"]["lfc_cutoff"],
+    log:
+        f"{LOG}/03_dge.log",
+    shell:
+        "Rscript {input.script} > {log} 2>&1"
+
+
+rule pathway_analysis:
+    input:
+        f"{TAB}/deseq2_results.tsv",
+        f"{TAB}/significant_genes.tsv",
+        config["kegg"]["gene_sets"],
+        script="scripts/04_pathway_analysis.R",
+    output:
+        f"{TAB}/gage_upregulated_pathways.tsv",
+        f"{TAB}/gage_downregulated_pathways.tsv",
+        f"{TAB}/kegg_enrichment.tsv",
+        f"{TAB}/kegg_snapshot_info.txt",
+        f"{FIG}/kegg_enrichment_dotplot.png",
+        directory(f"{FIG}/pathview"),
+    params:
+        p=config["analysis"]["enrich_pvalue"],
+        q=config["analysis"]["enrich_qvalue"],
+    log:
+        f"{LOG}/04_pathway_analysis.log",
+    shell:
+        "Rscript {input.script} > {log} 2>&1"
