@@ -1,0 +1,136 @@
+---
+title: "Effects of spaceflight on gene expression in mouse skin (GLDS-241)"
+subtitle: "Reproducible re-analysis of a bioinformatics project"
+author:
+  - Meera Alzaabi
+  - Razan Amer
+  - Shamsa Aladawi
+  - Hessa Almesafri
+  - Meznah Alhmoudi
+  - Radyah Fiza
+date: today
+format:
+  html:
+    embed-resources: true
+    toc: true
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+res_dir <- "../results"
+tab <- function(f) read.delim(file.path(res_dir, "tables", f), check.names = FALSE)
+fig <- function(f) file.path(res_dir, "figures", f)
+cfg <- yaml::read_yaml("../config/config.yaml")
+
+samples   <- read.delim("../data/processed/samples.tsv")
+variance  <- tab("pca_variance.tsv")
+filtering <- tab("filtering_summary.tsv")
+clusters  <- tab("kmeans_clusters.tsv")
+sig       <- tab("significant_genes.tsv")
+up        <- tab("gage_upregulated_pathways.tsv")
+down      <- tab("gage_downregulated_pathways.tsv")
+enrich    <- tab("kegg_enrichment.tsv")
+kegg_info <- readLines(file.path(res_dir, "tables", "kegg_snapshot_info.txt"))
+n_gc  <- sum(samples$condition == "Ground Control")
+n_flt <- sum(samples$condition == "Space Flight")
+```
+
+## Question and data
+
+Does spaceflight change gene expression in mouse skin, and are
+cholesterol-metabolism genes affected?
+
+Data: NASA OSDR study OSD-241 (GLDS-241, Rodent Research-5), RNA-seq of femoral
+skin from `r n_flt` spaceflight and `r n_gc` ground-control mice
+([doi:10.26030/gfsz-c144](https://doi.org/10.26030/gfsz-c144)). The analysis
+starts from GeneLab's RSEM unnormalized counts table.
+
+## PCA and clustering
+
+After filtering, `r filtering$genes_after_filter` of
+`r filtering$genes_before_filter` genes were kept. PC1 explains
+`r variance$percent_variance[1]`% and PC2 `r variance$percent_variance[2]`% of
+the variance.
+
+```{r}
+#| label: fig-pca
+#| fig-cap: "PCA of normalised expression, coloured by condition."
+#| fig-alt: "Scatter plot of samples on the first two principal components, red for ground control and blue for spaceflight."
+knitr::include_graphics(fig("pca.png"))
+```
+
+```{r}
+#| label: tbl-kmeans
+#| tbl-cap: "K-means clusters against experimental condition."
+knitr::kable(table(Condition = clusters$condition, Cluster = clusters$cluster))
+```
+
+```{r}
+#| label: fig-dend
+#| fig-cap: "Hierarchical clustering of samples on the first two principal components."
+#| fig-alt: "Dendrogram of the samples split into two coloured groups."
+knitr::include_graphics(fig("hierarchical_dendrogram.png"))
+```
+
+## Differential expression
+
+With padj < `r cfg$analysis$padj_cutoff` and |log2 fold change| >
+`r cfg$analysis$lfc_cutoff`, DESeq2 finds **`r nrow(sig)` significant genes**.
+
+```{r}
+#| label: fig-volcano
+#| fig-cap: "Volcano plot: log2 fold change (spaceflight vs ground) against -log10 p-value."
+#| fig-alt: "Volcano-shaped scatter of all genes with significant genes highlighted."
+knitr::include_graphics(fig("volcano_plot.png"))
+```
+
+```{r}
+#| label: tbl-top-genes
+#| tbl-cap: "Significant genes, with gene symbols where known."
+sig$symbol <- suppressMessages(AnnotationDbi::mapIds(
+  org.Mm.eg.db::org.Mm.eg.db, sub("\\.\\d+$", "", sig$gene_id),
+  "SYMBOL", "ENSEMBL"))
+knitr::kable(sig[, c("gene_id", "symbol", "log2FoldChange", "padj")],
+             digits = 4, row.names = FALSE)
+```
+
+## Pathways
+
+Top GAGE pathway up in spaceflight: **`r up$pathway[1]`**; top pathway down:
+**`r down$pathway[1]`**. KEGG gene sets: `r kegg_info[1]`.
+
+```{r}
+#| label: tbl-enrichment
+#| tbl-cap: "KEGG pathways enriched among the significant genes."
+if (nrow(enrich) > 0) {
+  knitr::kable(enrich[, c("ID", "Description", "GeneRatio", "p.adjust")],
+               digits = 4, row.names = FALSE)
+} else {
+  cat("No KEGG pathway was enriched at the chosen cutoffs.")
+}
+```
+
+```{r}
+#| label: fig-enrich
+#| fig-cap: "Enriched KEGG pathways among the significant genes."
+#| fig-alt: "Dot plot of enriched KEGG pathways coloured by adjusted p-value."
+knitr::include_graphics(fig("kegg_enrichment_dotplot.png"))
+```
+
+## Software
+
+```{r}
+#| label: tbl-software
+#| tbl-cap: "Versions of the main R packages."
+pkgs <- c("edgeR", "DESeq2", "factoextra", "pheatmap", "gage", "pathview",
+          "clusterProfiler", "org.Mm.eg.db")
+knitr::kable(data.frame(package = pkgs,
+                        version = sapply(pkgs, function(p) as.character(packageVersion(p)))),
+             row.names = FALSE)
+```
+
+`r R.version.string`. Session details for each step are in `results/logs/`.
