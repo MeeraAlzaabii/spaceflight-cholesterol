@@ -5,8 +5,7 @@ data:
   raw_dir: "data/raw/OSD-241"          # downloaded files land here (read-only)
   # Files to download from OSD-241 (case-insensitive substrings; .csv only)
   download_patterns: ["RSEM_Unnormalized_Counts_GLbulkRNAseq", "SampleTable"]
-  # Which downloaded file is the counts table (regular expressions, tried in
-  # order; the first that matches exactly one file is used).
+  # Which downloaded file is the counts table (regular expressions, tried in order; the first that matches exactly one file is used).
   counts_patterns: ["RSEM_Unnormalized_Counts_GLbulkRNAseq"]
   ground_label: "_GC_"                 # substring of ground-control sample names
   flight_label: "_FLT_"                # substring of spaceflight sample names
