@@ -8,7 +8,24 @@ authors:
     family-names: "Alzaabi"
     email: "meera.asa.alzaabi@gmail.com"
     orcid: "https://orcid.org/0009-0003-8850-5731"
+  - given-names: "Razan"
+    family-names: "Amer"
+  - given-names: "Shamsa"
+    family-names: "Aladawi"
+  - given-names: "Hessa"
+    family-names: "Almesafri"
+  - given-names: "Meznah"
+    family-names: "Alhmoudi"
+  - given-names: "Radyah"
+    family-names: "Fiza"
 repository-code: "https://github.com/MeeraAlzaabii/spaceflight-cholesterol"
 license: MIT
-version: 0.1.0
-date-released: "2026-11-09"
+version: 1.0.0
+date-released: "2026-11-23"
+references:
+  - type: data
+    title: "Transcriptional analysis of femoral skin from mice flown on the RR-5 mission"
+    authors:
+      - name: "NASA GeneLab"
+    doi: "10.26030/gfsz-c144"
+    url: "https://osdr.nasa.gov/bio/repo/data/studies/OSD-241"
