@@ -1,8 +1,12 @@
 # workflow
 
-Pipelines that run the analysis steps in the right order:
 
-- `Snakefile` (Snakemake, lesson 09)
-- `nextflow/main.nf` and `nextflow/nextflow.config` (Nextflow, lesson 10)
+`Snakefile` runs the four analysis steps in order (scripts 01 to 04) and only
+reruns a step when its inputs, script or settings change.
 
-Both are launched through Pixi, for example `pixi run snakemake --cores 4`.
+Run it with `pixi run run-snakemake`, or the whole project (download, analysis
+and report) with `pixi run reproduce`. Use `pixi run snakemake --cores 1 -n`
+to see which steps would run without running them.
+
+Settings are read from `config/config.yaml`; logs for each step are written to
+`results/logs/`. 

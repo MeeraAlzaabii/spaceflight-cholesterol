@@ -1,5 +1,7 @@
 # results
 
-Outputs made by the code: figures, tables, logs, QC reports. Everything here
-can be rebuilt with `pixi run reproduce`, so it is not committed to Git.
-Final figures that go into a paper are archived with the release (lesson 12).
+Everything the analysis makes, rebuilt by `pixi run reproduce`:
+
+- `figures/`: PCA, clustering, MA, volcano, heatmap, KEGG enrichment and pathview diagrams.
+- `tables/`: DESeq2 results, significant genes, PCA, clusters and pathway tables.
+- `logs/`: one log and one package-version file per step.

@@ -1,5 +1,5 @@
-#Shared helpers for the analysis scripts. Run every script from the project
-#folder (pixi and Snakemake do this), so all paths are relative to it.
+#Shared helpers for the analysis scripts. 
+#Run every script from the project folder , so all paths are relative to it.
 
 cfg <- yaml::read_yaml("config/config.yaml")
 

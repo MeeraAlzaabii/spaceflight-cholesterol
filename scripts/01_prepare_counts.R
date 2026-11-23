@@ -1,5 +1,5 @@
 #Step 1: read the GeneLab counts table and label each sample
-#(Report section 2.2; appendix B)
+
 source("scripts/common.R")
 
 #Find the counts table among the downloaded files
