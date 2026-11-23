@@ -1,11 +1,18 @@
 # data/raw
 
-Raw data exactly as you received it.
+Raw data exactly as downloaded. 
 
-- **Never edit these files.** If something needs fixing, fix it in code and
-  write the result to `data/processed/`.
-- Get the files with a script (for example `pixi run download`), not by hand,
-  so anyone can get the same files.
-- Record where each file comes from and its checksum in `metadata/`.
-- The files are not committed to Git (see `.gitignore`); the download script
-  and the checksums are.
+- **Never edit these files.** They are made read-only. If something needs fixing, fix it in code and
+
+
+
+- `OSD-241/`: GLDS-241 RSEM counts table and sample table from NASA OSDR.
+- `kegg/`: KEGG mouse gene sets and pathway drawings.
+
+Download the data with `pixi run download` not by hand. 
+
+Sources and checksums are in `metadata/`.
+
+
+
+
