@@ -1,4 +1,5 @@
 # docs
 
-Documentation that does not fit in the main README: how to run on a cluster,
-design decisions, a changelog, notes for contributors.
+Longer documentation:
+
+- `decisions.md`: what changed from the original 2024 analysis code, and why.
